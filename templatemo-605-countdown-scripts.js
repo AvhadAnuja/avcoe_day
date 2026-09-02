@@ -34,10 +34,22 @@ function createParticles() {
    }
 }
 
-// Countdown Timer - Target: December 25, 2025 at 6:00 PM
+// Countdown Timer - Target: the next upcoming December 25 at 6:00 PM
+
+function getNextChristmas() {
+   const now = new Date();
+   let year = now.getFullYear();
+   let christmas = new Date(year, 11, 25, 18, 0, 0);
+
+   // If this year's Christmas has already passed, count down to next year's
+   if (now.getTime() > christmas.getTime()) {
+      christmas = new Date(year + 1, 11, 25, 18, 0, 0);
+   }
+   return christmas;
+}
 
 function updateCountdown() {
-   const christmas = new Date('December 25, 2025 18:00:00').getTime();
+   const christmas = getNextChristmas().getTime();
    const now = new Date().getTime();
    const distance = christmas - now;
 
@@ -125,10 +137,20 @@ function setupNewsletter() {
    });
 }
 
+// Display the target date text (e.g. "December 25, 2026 at 6:00 PM")
+function setTargetDateText() {
+   const el = document.getElementById('targetDateText');
+   if (!el) return;
+   const christmas = getNextChristmas();
+   const options = { year: 'numeric', month: 'long', day: 'numeric' };
+   el.textContent = christmas.toLocaleDateString('en-US', options) + ' at 6:00 PM';
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
    createParticles();
    updateCountdown();
+   setTargetDateText();
    setInterval(updateCountdown, 1000);
    setupNavigation();
    setupNewsletter();
